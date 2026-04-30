@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🇨🇦 Canadian Retirement Calculator
+
+A comprehensive, privacy-first Canadian retirement planning calculator built with Next.js 16, TypeScript, and Tailwind CSS. All calculations run client-side in your browser — no backend, no accounts, no tracking.
+
+## Features
+
+- **Province-aware tax engine** — 2025 federal + provincial/territorial brackets for all 13 jurisdictions
+- **Government benefits** — OAS (with deferral 65–70 and clawback), CPP (60/65/70), inflation-indexed
+- **Multi-scenario projections** — XEQT benchmark (13.86%), user-defined trajectory, conservative
+- **Monte Carlo simulation** — 500 randomized paths with success rate
+- **Withdrawal optimization** — pre-65 vs post-65 strategies, optimal account ordering
+- **Lunch Money integration** — auto-import account balances (key stored only in your browser)
+- **Export** — print-ready PDF, year-by-year CSV, shareable URL
+- **Dark mode**, mobile responsive, full keyboard accessibility
+
+## Stack
+
+- Next.js 16 App Router · TypeScript · Tailwind CSS v4
+- shadcn/ui components · Recharts for visualization
+- Zustand (with immer + persist) for state management
+- React Hook Form + Zod for validation
+- Vercel deployment ready
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build & Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build  # Verify the production build
+npm start      # Serve locally
+```
 
-## Learn More
+### Deploy to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+vercel deploy
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Or push to GitHub and connect the repo at [vercel.com/new](https://vercel.com/new). Settings are pre-configured in `vercel.json` (security headers + CSP).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Privacy & Security
 
-## Deploy on Vercel
+- **No backend**: every calculation runs client-side
+- **No accounts**: no signup, no auth, no analytics by default
+- **Lunch Money key**: stored only in `localStorage`, sent only to `dev.lunchmoney.app`
+- **CSP headers** restrict outbound connections to Lunch Money's API
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## File Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/                    Next.js App Router pages
+    page.tsx              Main calculator
+    settings/page.tsx     Lunch Money setup
+    layout.tsx
+    globals.css
+  components/
+    calculator/           Charts, dashboard, inputs, etc.
+    lunchmoney/           API connect, account categorization
+    ui/                   shadcn/ui generated components
+  lib/
+    constants.ts          2025 tax brackets, OAS/CPP/RRSP/TFSA
+    tax.ts                Tax calculation engine
+    retirement.ts         Projection + PMT engine
+    monteCarlo.ts         Simulation
+    lunchmoney.ts         Lunch Money API client
+    utils.ts              cn(), formatters
+  store/
+    calculatorStore.ts    Zustand state
+  types/
+    index.ts              Shared TypeScript types
+```
+
+## Disclaimer
+
+For informational purposes only. Not financial advice. Consult a licensed financial advisor.
+Tax rates, OAS, and CPP amounts are current as of Q1 2025 and indexed annually in projections.
