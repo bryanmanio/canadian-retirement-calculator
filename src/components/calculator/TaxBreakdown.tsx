@@ -3,8 +3,9 @@
 import { useMemo } from "react"
 import { useCalculatorStore } from "@/store/calculatorStore"
 import { calculateIncomeTax, grossUpForTax, calculateOASAnnual, calculateCPPAnnual } from "@/lib/tax"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { formatCurrency, formatPercent } from "@/lib/utils"
 import { PROVINCE_NAMES, SCENARIO_DEFAULTS } from "@/lib/constants"
 import type { ProvinceCode } from "@/types"
@@ -107,23 +108,29 @@ export function TaxBreakdown() {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold">Tax Breakdown</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="current">
-          <TabsList className="mb-4">
-            <TabsTrigger value="best" className="text-xs">Best Case</TabsTrigger>
-            <TabsTrigger value="current" className="text-xs">Current</TabsTrigger>
-            <TabsTrigger value="worst" className="text-xs">Worst Case</TabsTrigger>
-          </TabsList>
-          {(["best", "current", "worst"] as const).map(id => (
-            <TabsContent key={id} value={id}>
-              <TaxCard returnRate={state.assumptions.scenarioReturns[id]} label={SCENARIO_DEFAULTS[id].label} />
-            </TabsContent>
-          ))}
-        </Tabs>
-      </CardContent>
+      <Accordion type="single" collapsible>
+        <AccordionItem value="tax" className="border-none">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <span className="text-sm font-semibold">Tax Breakdown</span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <CardContent className="pt-0">
+              <Tabs defaultValue="current">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="best" className="text-xs">Best Case</TabsTrigger>
+                  <TabsTrigger value="current" className="text-xs">Current</TabsTrigger>
+                  <TabsTrigger value="worst" className="text-xs">Worst Case</TabsTrigger>
+                </TabsList>
+                {(["best", "current", "worst"] as const).map(id => (
+                  <TabsContent key={id} value={id}>
+                    <TaxCard returnRate={state.assumptions.scenarioReturns[id]} label={SCENARIO_DEFAULTS[id].label} />
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </CardContent>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   )
 }

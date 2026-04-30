@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useCalculatorStore } from "@/store/calculatorStore"
 import { computeAllScenarios, computeWithdrawalBreakdown } from "@/lib/retirement"
 import {
@@ -16,6 +16,9 @@ import {
 } from "recharts"
 import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 const COLORS = {
   tfsa: "#6366f1",
@@ -49,6 +52,7 @@ function CustomLegend({ payload }: any) {
 
 export function WithdrawalBreakdown() {
   const state = useCalculatorStore()
+  const [showDetails, setShowDetails] = useState(false)
 
   const params = useMemo(() => ({
     currentAge: state.currentAge,
@@ -122,8 +126,19 @@ export function WithdrawalBreakdown() {
           </BarChart>
         </ResponsiveContainer>
 
+        {/* Toggle details */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-xs h-7 text-muted-foreground w-full"
+          onClick={() => setShowDetails(s => !s)}
+        >
+          <ChevronDown className={cn("h-3 w-3 mr-1 transition-transform", showDetails && "rotate-180")} />
+          {showDetails ? "Hide" : "Show"} breakdown by source &amp; optimal order
+        </Button>
+
         {/* Summary table */}
-        {breakdowns.map(b => (
+        {showDetails && breakdowns.map(b => (
           <div key={b.label} className="text-sm space-y-1">
             <div className="font-semibold">{b.label}</div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs">
@@ -140,7 +155,7 @@ export function WithdrawalBreakdown() {
         ))}
 
         {/* Optimal order recommendation */}
-        <div>
+        {showDetails && <div>
           <div className="text-sm font-semibold mb-2">Optimal withdrawal order</div>
           <div className="space-y-2">
             {orderData.map(step => (
@@ -153,7 +168,7 @@ export function WithdrawalBreakdown() {
               </div>
             ))}
           </div>
-        </div>
+        </div>}
       </CardContent>
     </Card>
   )

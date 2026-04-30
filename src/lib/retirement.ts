@@ -40,16 +40,17 @@ export function calculateRequiredPortfolio(params: ProjectionParams): number {
   const { target, benefits, assumptions, province } = params
   const yearsToRetirement = params.targetRetirementAge - params.currentAge
 
-  // Government income at retirement age
+  // Government income at retirement (in today's real dollars; OAS/CPP indexed
+  // to inflation in the projection so we just use the today-equivalent base)
+  void yearsToRetirement
   const oasIncome =
     benefits.includeOAS && params.targetRetirementAge >= benefits.oasStartAge
-      ? calculateOASAnnual(benefits.oasStartAge, yearsToRetirement, assumptions.oasIndexingRate)
+      ? calculateOASAnnual(benefits.oasStartAge, 0, 0)
       : 0
 
   const cppIncome =
     benefits.includeCPP && params.targetRetirementAge >= benefits.cppStartAge
-      ? calculateCPPAnnual(benefits.estimatedMonthlyCPP, benefits.cppStartAge) *
-        Math.pow(1 + assumptions.oasIndexingRate, yearsToRetirement)
+      ? calculateCPPAnnual(benefits.estimatedMonthlyCPP, benefits.cppStartAge)
       : 0
 
   const govIncome = oasIncome + cppIncome
@@ -80,6 +81,15 @@ export function projectPortfolio(
   const annualContribution = getTotalAnnualContribution(params)
   const requiredPortfolio = calculateRequiredPortfolio(params)
 
+  // Use REAL (inflation-adjusted) return rate so all values stay in today's
+  // purchasing power. Otherwise nominal compounding over 40 years produces
+  // numbers that look astronomical but represent the same real wealth.
+  const realReturnRate = (1 + returnRate) / (1 + assumptions.inflationRate) - 1
+
+  // OAS/CPP real growth: their indexing rate vs general inflation.
+  // If oasIndexingRate < inflationRate, real value of benefits decays.
+  const realBenefitGrowth = (1 + assumptions.oasIndexingRate) / (1 + assumptions.inflationRate) - 1
+
   for (let i = 0; i <= years; i++) {
     const age = currentAge + i
     const year = CURRENT_YEAR + i
@@ -93,43 +103,38 @@ export function projectPortfolio(
     let netIncome = 0
 
     if (isRetired) {
-      const yearsRetired = Math.max(0, yearsFromRetirement)
-
-      // Government benefits (inflation-indexed)
+      // Government benefits in TODAY's dollars (real terms)
       if (benefits.includeOAS && age >= benefits.oasStartAge) {
-        const yearsToOASStart = Math.max(0, benefits.oasStartAge - targetRetirementAge)
-        const yearsOfOASIndexing = i - (targetRetirementAge - currentAge) + yearsToOASStart
-        oasIncome = calculateOASAnnual(
-          benefits.oasStartAge,
-          yearsOfOASIndexing,
-          assumptions.oasIndexingRate
-        )
+        const yearsSinceOASStart = age - benefits.oasStartAge
+        oasIncome = calculateOASAnnual(benefits.oasStartAge, 0, 0) *
+          Math.pow(1 + realBenefitGrowth, Math.max(0, yearsSinceOASStart))
       }
 
       if (benefits.includeCPP && age >= benefits.cppStartAge) {
         const baseCPP = calculateCPPAnnual(benefits.estimatedMonthlyCPP, benefits.cppStartAge)
-        const yearsOfCPPIndexing = age - Math.max(targetRetirementAge, benefits.cppStartAge)
-        cppIncome = baseCPP * Math.pow(1 + assumptions.oasIndexingRate, Math.max(0, yearsOfCPPIndexing))
+        const yearsSinceCPPStart = age - benefits.cppStartAge
+        cppIncome = baseCPP * Math.pow(1 + realBenefitGrowth, Math.max(0, yearsSinceCPPStart))
       }
 
-      // Target income grows with inflation
-      const inflatedTarget = target.annualIncome * Math.pow(1 + assumptions.inflationRate, yearsRetired)
+      // Target income held constant in real (today's) dollars
+      const realTarget = target.annualIncome
       const govIncome = oasIncome + cppIncome
-      const incomeGap = Math.max(0, inflatedTarget - govIncome)
+      const incomeGap = Math.max(0, realTarget - govIncome)
 
-      // Gross up for tax
+      // Gross up for tax (today's brackets — they're indexed to inflation)
       const grossNeeded = grossUpForTax(incomeGap, province, target.incomeType)
+      void yearsFromRetirement
       annualWithdrawal = grossNeeded
 
       const taxCalc = calculateIncomeTax(grossNeeded + govIncome, province)
       taxOwed = taxCalc.totalTax
-      netIncome = inflatedTarget
+      netIncome = realTarget
 
-      // Drawdown phase (mid-year convention)
-      portfolio = Math.max(0, (portfolio - annualWithdrawal / 2) * (1 + returnRate) - annualWithdrawal / 2)
+      // Drawdown phase (mid-year convention) using REAL return
+      portfolio = Math.max(0, (portfolio - annualWithdrawal / 2) * (1 + realReturnRate) - annualWithdrawal / 2)
     } else if (i > 0) {
-      // Accumulation phase
-      portfolio = (portfolio + annualContribution / 2) * (1 + returnRate) + annualContribution / 2
+      // Accumulation phase using REAL return
+      portfolio = (portfolio + annualContribution / 2) * (1 + realReturnRate) + annualContribution / 2
     }
 
     projections.push({

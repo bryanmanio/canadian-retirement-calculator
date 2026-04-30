@@ -106,7 +106,7 @@ export function InputsPanel() {
         </div>
       )}
 
-      <Accordion type="multiple" defaultValue={["personal", "portfolio", "contributions", "target", "benefits"]}>
+      <Accordion type="multiple" defaultValue={["personal", "portfolio"]}>
         {/* Personal Info */}
         <AccordionItem value="personal">
           <AccordionTrigger className="text-sm font-semibold">Personal Info</AccordionTrigger>

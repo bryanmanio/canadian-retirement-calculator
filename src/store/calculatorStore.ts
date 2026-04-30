@@ -174,11 +174,13 @@ export const useCalculatorStore = create<CalculatorState>()(
               currentPortfolio: totalPortfolio,
               annualContribution,
               annualGrossWithdrawal,
-              mean: state.assumptions.scenarioReturns.current,
+              // Use REAL return so Monte Carlo paths are in today's dollars
+              mean: (1 + state.assumptions.scenarioReturns.current) / (1 + state.assumptions.inflationRate) - 1,
               stdDev: state.assumptions.stdDev,
               yearsToRetirement: Math.max(0, state.targetRetirementAge - state.currentAge),
               yearsInRetirement: Math.max(0, 90 - state.targetRetirementAge),
-              inflationRate: state.assumptions.inflationRate,
+              // No additional inflation in withdrawal — already in today's dollars
+              inflationRate: 0,
               simulations: state.assumptions.monteCarloSimulations,
             })
             set(s => {
