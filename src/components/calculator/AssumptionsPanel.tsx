@@ -90,6 +90,46 @@ export function AssumptionsPanel() {
                     min={0.02} max={0.07} step={0.001}
                     onChange={v => state.setAssumptions({ withdrawalRate: v })}
                   />
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={state.assumptions.withdrawalRate === 0.03 ? "default" : "outline"}
+                      className="h-auto py-1.5 text-[11px] leading-tight flex flex-col gap-0.5"
+                      onClick={() => state.setAssumptions({ withdrawalRate: 0.03 })}
+                    >
+                      <span>Conservative</span>
+                      <span className="font-semibold">3.0%</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={state.assumptions.withdrawalRate === 0.04 ? "default" : "outline"}
+                      className="h-auto py-1.5 text-[11px] leading-tight flex flex-col gap-0.5 border-primary/50 ring-1 ring-primary/20"
+                      onClick={() => state.setAssumptions({ withdrawalRate: 0.04 })}
+                    >
+                      <span>Recommended</span>
+                      <span className="font-semibold">4.0%</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={state.assumptions.withdrawalRate === 0.05 ? "default" : "outline"}
+                      className="h-auto py-1.5 text-[11px] leading-tight flex flex-col gap-0.5"
+                      onClick={() => state.setAssumptions({ withdrawalRate: 0.05 })}
+                    >
+                      <span>Aggressive</span>
+                      <span className="font-semibold">5.0%</span>
+                    </Button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <strong>Recommended (4%)</strong> follows the Bengen rule / Trinity Study —
+                    the most widely-cited safe withdrawal rate. Historical U.S. data shows a 4% initial
+                    withdrawal (adjusted for inflation each year) lasted 30+ years in ~95% of scenarios.
+                    <strong> Conservative (3%)</strong> reflects more recent research (Pfau, Morningstar)
+                    accounting for lower bond yields and longer retirements.
+                    <strong> Aggressive (5%)</strong> works only with a flexible spending plan or shorter horizon.
+                  </p>
                 </div>
 
                 {/* Return rates */}

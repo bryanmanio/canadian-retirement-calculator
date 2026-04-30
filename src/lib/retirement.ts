@@ -38,28 +38,33 @@ export function getTotalAnnualContribution(params: ProjectionParams): number {
 
 export function calculateRequiredPortfolio(params: ProjectionParams): number {
   const { target, benefits, assumptions, province } = params
-  const yearsToRetirement = params.targetRetirementAge - params.currentAge
+  const retireAge = params.targetRetirementAge
 
-  // Government income at retirement (in today's real dollars; OAS/CPP indexed
-  // to inflation in the projection so we just use the today-equivalent base)
-  void yearsToRetirement
-  const oasIncome =
-    benefits.includeOAS && params.targetRetirementAge >= benefits.oasStartAge
-      ? calculateOASAnnual(benefits.oasStartAge, 0, 0)
-      : 0
-
-  const cppIncome =
-    benefits.includeCPP && params.targetRetirementAge >= benefits.cppStartAge
-      ? calculateCPPAnnual(benefits.estimatedMonthlyCPP, benefits.cppStartAge)
-      : 0
-
+  // Long-term steady state: include OAS/CPP regardless of retirement age —
+  // they'll eventually kick in at their respective start ages and reduce the
+  // ongoing burden on the portfolio.
+  const oasIncome = benefits.includeOAS
+    ? calculateOASAnnual(benefits.oasStartAge, 0, 0)
+    : 0
+  const cppIncome = benefits.includeCPP
+    ? calculateCPPAnnual(benefits.estimatedMonthlyCPP, benefits.cppStartAge)
+    : 0
   const govIncome = oasIncome + cppIncome
   const incomeGap = Math.max(0, target.annualIncome - govIncome)
 
-  // Gross up the income gap for taxes
   const grossWithdrawal = grossUpForTax(incomeGap, province, target.incomeType)
+  const longTermPortfolio = grossWithdrawal / assumptions.withdrawalRate
 
-  return grossWithdrawal / assumptions.withdrawalRate
+  // Bridge fund: when retiring before benefits start, the portfolio must
+  // cover the full target income for those years (no government top-up yet).
+  const benefitsFullyActiveAge = Math.max(
+    benefits.includeOAS ? benefits.oasStartAge : retireAge,
+    benefits.includeCPP ? benefits.cppStartAge : retireAge
+  )
+  const bridgeYears = Math.max(0, benefitsFullyActiveAge - retireAge)
+  const bridgeFund = bridgeYears * govIncome
+
+  return longTermPortfolio + bridgeFund
 }
 
 export function projectPortfolio(

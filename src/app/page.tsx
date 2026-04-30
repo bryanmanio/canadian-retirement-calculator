@@ -17,7 +17,7 @@ import { Settings } from "lucide-react"
 import Link from "next/link"
 
 function PageInner() {
-  const { loadFromURL, lmConnected } = useCalculatorStore()
+  const { loadFromURL } = useCalculatorStore()
   const searchParams = useSearchParams()
 
   useEffect(() => {
@@ -37,11 +37,6 @@ function PageInner() {
             <p className="text-xs text-muted-foreground">All calculations are private and run in your browser</p>
           </div>
           <div className="flex items-center gap-2">
-            {lmConnected && (
-              <span className="text-xs bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400 px-2 py-1 rounded-full font-medium">
-                Lunch Money connected
-              </span>
-            )}
             <Button variant="outline" size="sm" asChild>
               <Link href="/settings"><Settings className="h-4 w-4 mr-1" />Settings</Link>
             </Button>
