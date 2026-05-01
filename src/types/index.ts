@@ -46,6 +46,9 @@ export interface Assumptions {
     current: number
     worst: number
   }
+  // Post-retirement nominal return (assumes de-risking to ~60/40 portfolio).
+  // Used instead of scenarioReturns once isRetired === true.
+  postRetirementReturn: number
   stdDev: number
   monteCarloSimulations: number
 }

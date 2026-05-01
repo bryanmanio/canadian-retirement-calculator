@@ -111,7 +111,7 @@ export const useCalculatorStore = create<CalculatorState>()(
     immer((set, get) => ({
       currentAge: 41,
       targetRetirementAge: 60,
-      province: "ON" as ProvinceCode,
+      province: "AB" as ProvinceCode,
       filingStatus: "single" as const,
 
       balances: DEFAULT_BALANCES,
@@ -324,7 +324,7 @@ export const useCalculatorStore = create<CalculatorState>()(
         set(s => {
           s.currentAge = 41
           s.targetRetirementAge = 60
-          s.province = "ON"
+          s.province = "AB"
           s.filingStatus = "single"
           Object.assign(s.balances, DEFAULT_BALANCES)
           Object.assign(s.contributions, DEFAULT_CONTRIBUTIONS)
@@ -344,7 +344,7 @@ export const useCalculatorStore = create<CalculatorState>()(
       },
     })),
     {
-      name: "retirement-calc-v1",
+      name: "retirement-calc-v2",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

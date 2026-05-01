@@ -90,6 +90,16 @@ export function AssumptionsPanel() {
                     min={0.02} max={0.07} step={0.001}
                     onChange={v => state.setAssumptions({ withdrawalRate: v })}
                   />
+                  <AssumptionSlider
+                    label="Post-retirement return (de-risked)"
+                    value={state.assumptions.postRetirementReturn}
+                    min={0.02} max={0.10} step={0.005}
+                    onChange={v => state.setAssumptions({ postRetirementReturn: v })}
+                  />
+                  <p className="text-xs text-muted-foreground -mt-1">
+                    Assumes you shift to a more conservative allocation (e.g., 60/40) at retirement.
+                    Set this to your scenario rate if you plan to stay 100% equity.
+                  </p>
                 </div>
 
                 {/* Return rates */}

@@ -86,6 +86,12 @@ export function projectPortfolio(
   // numbers that look astronomical but represent the same real wealth.
   const realReturnRate = (1 + returnRate) / (1 + assumptions.inflationRate) - 1
 
+  // Post-retirement: assume de-risking to 60/40 (or whatever user sets).
+  // This is the dominant factor in keeping post-retirement projections
+  // realistic — staying 100% equity in retirement compounds wildly.
+  const postRetirementNominal = Math.min(returnRate, assumptions.postRetirementReturn)
+  const realPostRetirementReturn = (1 + postRetirementNominal) / (1 + assumptions.inflationRate) - 1
+
   // OAS/CPP real growth: their indexing rate vs general inflation.
   // If oasIndexingRate < inflationRate, real value of benefits decays.
   const realBenefitGrowth = (1 + assumptions.oasIndexingRate) / (1 + assumptions.inflationRate) - 1
@@ -130,10 +136,11 @@ export function projectPortfolio(
       taxOwed = taxCalc.totalTax
       netIncome = realTarget
 
-      // Drawdown phase (mid-year convention) using REAL return
-      portfolio = Math.max(0, (portfolio - annualWithdrawal / 2) * (1 + realReturnRate) - annualWithdrawal / 2)
+      // Drawdown phase (mid-year convention) using POST-RETIREMENT real return
+      // (assumes de-risked allocation — typically 60/40 = ~3.5% real)
+      portfolio = Math.max(0, (portfolio - annualWithdrawal / 2) * (1 + realPostRetirementReturn) - annualWithdrawal / 2)
     } else if (i > 0) {
-      // Accumulation phase using REAL return
+      // Accumulation phase using full REAL return (aggressive growth allocation)
       portfolio = (portfolio + annualContribution / 2) * (1 + realReturnRate) + annualContribution / 2
     }
 

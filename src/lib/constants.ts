@@ -272,6 +272,8 @@ export const DEFAULT_ASSUMPTIONS: Assumptions = {
   oasIndexingRate: 0.02,
   withdrawalRate: 0.04,
   scenarioReturns: { best: 0.1386, current: 0.1095, worst: 0.07 },
+  // 60/40 portfolio nominal return — typical post-retirement de-risked allocation
+  postRetirementReturn: 0.06,
   stdDev: 0.12,
   monteCarloSimulations: 500,
 }
