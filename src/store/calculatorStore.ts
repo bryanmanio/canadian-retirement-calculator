@@ -362,7 +362,7 @@ export const useCalculatorStore = create<CalculatorState>()(
       },
     })),
     {
-      name: "retirement-calc-v2",
+      name: "retirement-calc-v3",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

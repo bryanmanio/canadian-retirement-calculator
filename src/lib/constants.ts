@@ -261,17 +261,28 @@ export const TFSA_2025 = {
 
 // ── Scenario defaults ─────────────────────────────────────────────────────────
 
+// Scenario rate defaults are anchored to 50-year (1975–2025) Canadian-investor
+// market data, all in CAD nominal:
+//   Best     — 100% global diversified equity (S&P 500 ~10.8%, TSX ~9.4%,
+//              MSCI World ~9.7%). Anchored at 9.5% for long-term realism.
+//   Average  — 60/40 balanced portfolio (60% equity / 40% bonds) which
+//              has averaged ~7.0% nominal over the last 50 years.
+//   Worst    — conservative / bear-decade case: a sustained low-return
+//              environment similar to 2000–2010 or aggressive bond
+//              allocation. ~5.0% nominal.
+// These are intentionally lower than recent-only XEQT history (~14%)
+// because that period overweights an unusually strong post-2019 run.
 export const SCENARIO_DEFAULTS = {
-  best:    { rate: 0.1386, label: "Best Case (XEQT)",    color: "#22c55e" },
-  current: { rate: 0.1095, label: "Current Trajectory",  color: "#3b82f6" },
-  worst:   { rate: 0.07,   label: "Worst Case",          color: "#ef4444" },
+  best:    { rate: 0.095, label: "Best",    color: "#22c55e" },
+  current: { rate: 0.07,  label: "Average", color: "#3b82f6" },
+  worst:   { rate: 0.05,  label: "Worst",   color: "#ef4444" },
 }
 
 export const DEFAULT_ASSUMPTIONS: Assumptions = {
   inflationRate: 0.025,
   oasIndexingRate: 0.02,
   withdrawalRate: 0.04,
-  scenarioReturns: { best: 0.1386, current: 0.1095, worst: 0.07 },
+  scenarioReturns: { best: 0.095, current: 0.07, worst: 0.05 },
   // 60/40 portfolio nominal return — typical post-retirement de-risked allocation
   postRetirementReturn: 0.06,
   stdDev: 0.12,

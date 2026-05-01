@@ -107,21 +107,21 @@ export function AssumptionsPanel() {
                     Return Rates
                   </div>
                   <AssumptionSlider
-                    label="Best case (XEQT benchmark)"
+                    label="Best (100% equity, 50-yr avg)"
                     value={state.assumptions.scenarioReturns.best}
-                    min={0.04} max={0.20} step={0.001}
+                    min={0.04} max={0.15} step={0.001}
                     onChange={v => state.setScenarioReturn("best", v)}
                   />
                   <AssumptionSlider
-                    label="Current trajectory"
+                    label="Average (60/40 balanced)"
                     value={state.assumptions.scenarioReturns.current}
-                    min={0.04} max={0.20} step={0.001}
+                    min={0.03} max={0.12} step={0.001}
                     onChange={v => state.setScenarioReturn("current", v)}
                   />
                   <AssumptionSlider
-                    label="Worst case (conservative)"
+                    label="Worst (conservative / bear decade)"
                     value={state.assumptions.scenarioReturns.worst}
-                    min={0.02} max={0.15} step={0.001}
+                    min={0.02} max={0.10} step={0.001}
                     onChange={v => state.setScenarioReturn("worst", v)}
                   />
                 </div>

@@ -39,11 +39,11 @@ export function ExportBar() {
   function handleCSV() {
     const scenarios = computeAllScenarios(params)
     const content = [
-      buildProjectionCSV(scenarios.best, "Best Case (XEQT)"),
+      buildProjectionCSV(scenarios.best, "Best (100% equity)"),
       "\n\n",
-      buildProjectionCSV(scenarios.current, "Current Trajectory"),
+      buildProjectionCSV(scenarios.current, "Average (60/40)"),
       "\n\n",
-      buildProjectionCSV(scenarios.worst, "Worst Case (Conservative)"),
+      buildProjectionCSV(scenarios.worst, "Worst (conservative)"),
     ].join("")
     downloadCSV("retirement-projections.csv", content)
     toast.success("CSV downloaded!")
