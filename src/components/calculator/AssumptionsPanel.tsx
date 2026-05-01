@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { formatPercent } from "@/lib/utils"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 function AssumptionSlider({
   label,
@@ -59,14 +59,13 @@ export function AssumptionsPanel() {
 
   return (
     <Card>
-      <CardHeader className="pb-0">
-        <Accordion type="single" collapsible>
-          <AccordionItem value="assumptions" className="border-none">
-            <AccordionTrigger className="py-2">
-              <CardTitle className="text-sm font-semibold">Assumptions &amp; Settings</CardTitle>
-            </AccordionTrigger>
-            <AccordionContent>
-              <CardContent className="px-0 space-y-5 pt-2">
+      <Accordion type="single" collapsible>
+        <AccordionItem value="assumptions" className="border-none">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <span className="text-sm font-semibold">Assumptions &amp; Settings</span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <CardContent className="pt-0 space-y-5">
                 {/* Inflation & rates */}
                 <div className="space-y-3">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -154,19 +153,18 @@ export function AssumptionsPanel() {
                   </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs"
-                  onClick={state.resetDefaults}
-                >
-                  Reset all assumptions to defaults
-                </Button>
-              </CardContent>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardHeader>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={state.resetDefaults}
+              >
+                Reset all assumptions to defaults
+              </Button>
+            </CardContent>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   )
 }
