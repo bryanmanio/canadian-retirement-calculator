@@ -94,6 +94,7 @@ export interface LunchMoneyAccount {
   id: number | string
   name: string
   type_name?: string
+  subtype_name?: string
   display_name?: string
   balance: string
   currency: string

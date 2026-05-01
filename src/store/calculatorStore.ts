@@ -200,15 +200,22 @@ export const useCalculatorStore = create<CalculatorState>()(
           if (!valid) throw new Error("Invalid API key — please check and try again.")
           saveLunchMoneyKey(key)
           const accounts = await fetchLunchMoneyAccounts(key)
-          const categories: Record<string, AccountCategory> = {}
+
+          // Preserve any categorizations the user previously set.
+          // Only auto-suggest for accounts we haven't seen before.
+          const existing = get().lmAccountCategories
+          const merged: Record<string, AccountCategory> = { ...existing }
           for (const acc of accounts) {
+            const id = String(acc.id)
+            if (merged[id]) continue // user already chose — don't overwrite
             const suggested = suggestCategory(acc)
-            if (suggested) categories[String(acc.id)] = suggested as AccountCategory
+            if (suggested) merged[id] = suggested as AccountCategory
           }
+
           set(s => {
             s.lmConnected = true
             s.lmAccounts = accounts
-            s.lmAccountCategories = categories
+            s.lmAccountCategories = merged
             s.lmLastSynced = new Date().toISOString()
             s.lmSyncing = false
           })
@@ -237,8 +244,19 @@ export const useCalculatorStore = create<CalculatorState>()(
         set(s => { s.lmSyncing = true; s.lmSyncError = null })
         try {
           const accounts = await fetchLunchMoneyAccounts(key)
+          // Auto-suggest categories for any newly-added accounts;
+          // preserve all existing manual categorizations.
+          const existing = get().lmAccountCategories
+          const merged: Record<string, AccountCategory> = { ...existing }
+          for (const acc of accounts) {
+            const id = String(acc.id)
+            if (merged[id]) continue
+            const suggested = suggestCategory(acc)
+            if (suggested) merged[id] = suggested as AccountCategory
+          }
           set(s => {
             s.lmAccounts = accounts
+            s.lmAccountCategories = merged
             s.lmLastSynced = new Date().toISOString()
             s.lmSyncing = false
           })
