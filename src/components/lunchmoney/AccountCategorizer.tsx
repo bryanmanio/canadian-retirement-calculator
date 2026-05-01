@@ -37,10 +37,26 @@ function formatBalance(balance: string, currency: string): string {
 export function AccountCategorizer() {
   const { lmAccounts, lmAccountCategories, setAccountCategory, applyLunchMoneyToBalances } = useCalculatorStore()
 
+  // Hide accounts with $0 balance — usually closed/unused and just clutter the list.
+  // Treat anything < $1 (or NaN) as zero.
+  const visibleAccounts = lmAccounts.filter(acc => {
+    const balance = parseFloat(acc.balance)
+    return !isNaN(balance) && Math.abs(balance) >= 1
+  })
+  const hiddenCount = lmAccounts.length - visibleAccounts.length
+
   if (lmAccounts.length === 0) {
     return (
       <div className="text-sm text-muted-foreground text-center py-8 border rounded-lg">
         No accounts found. Connect to Lunch Money first.
+      </div>
+    )
+  }
+
+  if (visibleAccounts.length === 0) {
+    return (
+      <div className="text-sm text-muted-foreground text-center py-8 border rounded-lg">
+        All {lmAccounts.length} accounts have a $0 balance.
       </div>
     )
   }
@@ -62,7 +78,7 @@ export function AccountCategorizer() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {lmAccounts.map(acc => {
+            {visibleAccounts.map(acc => {
               const id = String(acc.id)
               const category = lmAccountCategories[id]
               return (
@@ -110,7 +126,8 @@ export function AccountCategorizer() {
 
       <p className="text-xs text-muted-foreground">
         Accounts categorized as &quot;Cash / Chequing&quot; or &quot;Ignore&quot; are excluded from retirement calculations.
-        Categorizations are saved to your browser.
+        {hiddenCount > 0 && ` ${hiddenCount} zero-balance account${hiddenCount === 1 ? "" : "s"} hidden.`}
+        {" "}Categorizations are saved to your browser.
       </p>
     </div>
   )
