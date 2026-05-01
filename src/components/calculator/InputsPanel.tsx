@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { PROVINCE_NAMES, OAS_ANNUAL_BY_START_AGE } from "@/lib/constants"
 import type { ProvinceCode } from "@/types"
@@ -191,24 +193,61 @@ export function InputsPanel() {
             <SliderField label="Target net annual income" value={state.target.annualIncome} min={30_000} max={500_000} step={5_000}
               format={formatCurrency} onChange={v => state.setTarget({ annualIncome: v })} />
             <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Income source</Label>
+              <div className="flex items-center gap-1">
+                <Label className="text-sm text-muted-foreground">Income source</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs space-y-1">
+                      <p><strong>Mixed (recommended)</strong> typically nets the lowest effective tax rate because each source plays a different role:</p>
+                      <ul className="list-disc pl-4 space-y-0.5">
+                        <li>TFSA — tax-free, no OAS clawback</li>
+                        <li>Eligible dividends — dividend tax credit reduces effective rate</li>
+                        <li>RRSP/non-reg — fills lower brackets at low marginal rates</li>
+                      </ul>
+                      <p>Pure salary or pure dividends only beats mixed if your situation is unusual (e.g. 100% of net worth inside a corp with no personal savings).</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Select value={state.target.incomeType} onValueChange={v => state.setTarget({ incomeType: v as "salary" | "dividends" | "mixed" })}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="salary">Salary / employment income</SelectItem>
+                  <SelectItem value="mixed">Mixed (recommended)</SelectItem>
                   <SelectItem value="dividends">Eligible dividends (corp)</SelectItem>
-                  <SelectItem value="mixed">Mixed (50/50)</SelectItem>
+                  <SelectItem value="salary">Salary / employment income</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Withdrawal structure</Label>
+              <div className="flex items-center gap-1">
+                <Label className="text-sm text-muted-foreground">Withdrawal structure</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs text-xs space-y-1">
+                      <p><strong>Blended (recommended)</strong> draws from each account type strategically each year to:</p>
+                      <ul className="list-disc pl-4 space-y-0.5">
+                        <li>Stay in the lowest tax bracket possible</li>
+                        <li>Avoid OAS clawback (income &gt; $90,997 in 2025)</li>
+                        <li>Smooth out RRIF mandatory withdrawals after age 71</li>
+                        <li>Use TFSA last (tax-free growth, no income test)</li>
+                      </ul>
+                      <p>Personal-first delays corp dividend planning. Corporate-first wastes the dividend tax credit when used too aggressively.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <Select value={state.target.withdrawalStructure} onValueChange={v => state.setTarget({ withdrawalStructure: v as "personal-first" | "corporate-first" | "blended" })}>
                 <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="blended">Blended (recommended)</SelectItem>
                   <SelectItem value="personal-first">Personal accounts first</SelectItem>
                   <SelectItem value="corporate-first">Corporate first</SelectItem>
-                  <SelectItem value="blended">Blended</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -40,23 +40,23 @@ const DEFAULT_BALANCES: PortfolioBalances = {
 
 const DEFAULT_CONTRIBUTIONS: Contributions = {
   tfsa: 7_000,
-  rrsp: 15_000,
+  rrsp: 0,
   nonRegistered: 0,
-  corporate: 0,
+  corporate: 100_000,
 }
 
 const DEFAULT_BENEFITS: GovernmentBenefits = {
   includeOAS: true,
   oasStartAge: 65,
-  includeCPP: true,
+  includeCPP: false,
   cppStartAge: 65,
   estimatedMonthlyCPP: 800,
 }
 
 const DEFAULT_TARGET: RetirementTarget = {
-  annualIncome: 80_000,
-  incomeType: "salary",
-  withdrawalStructure: "personal-first",
+  annualIncome: 160_000,
+  incomeType: "mixed",
+  withdrawalStructure: "blended",
 }
 
 interface CalculatorState {
@@ -109,7 +109,7 @@ interface CalculatorState {
 export const useCalculatorStore = create<CalculatorState>()(
   persist(
     immer((set, get) => ({
-      currentAge: 35,
+      currentAge: 41,
       targetRetirementAge: 60,
       province: "ON" as ProvinceCode,
       filingStatus: "single" as const,
@@ -322,7 +322,7 @@ export const useCalculatorStore = create<CalculatorState>()(
 
       resetDefaults: () =>
         set(s => {
-          s.currentAge = 35
+          s.currentAge = 41
           s.targetRetirementAge = 60
           s.province = "ON"
           s.filingStatus = "single"
