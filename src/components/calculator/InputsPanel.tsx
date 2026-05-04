@@ -24,7 +24,6 @@ import { Info } from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 import { PROVINCE_NAMES, OAS_ANNUAL_BY_START_AGE } from "@/lib/constants"
 import type { ProvinceCode } from "@/types"
-import { SyncStatus } from "@/components/lunchmoney/SyncStatus"
 
 function SliderField({
   label,
@@ -99,15 +98,6 @@ export function InputsPanel() {
 
   return (
     <div className="space-y-3">
-      {/* Lunch Money sync status */}
-      {state.lmConnected && <SyncStatus />}
-
-      {!state.lmConnected && (
-        <div className="rounded-md border border-dashed border-muted-foreground/30 p-3 text-xs text-muted-foreground text-center">
-          Manual mode — <a href="/settings" className="underline hover:text-foreground">connect Lunch Money</a> to auto-fill balances
-        </div>
-      )}
-
       <Accordion type="multiple" defaultValue={["personal", "portfolio"]}>
         {/* Personal Info */}
         <AccordionItem value="personal">

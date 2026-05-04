@@ -13,7 +13,7 @@ import { AssumptionsPanel } from "@/components/calculator/AssumptionsPanel"
 import { MonteCarloChart } from "@/components/calculator/MonteCarloChart"
 import { ExportBar } from "@/components/calculator/ExportBar"
 import { Button } from "@/components/ui/button"
-import { Settings } from "lucide-react"
+import { Plus, Pencil } from "lucide-react"
 import Link from "next/link"
 
 function PageInner() {
@@ -36,16 +36,19 @@ function PageInner() {
             <h1 className="text-xl font-bold tracking-tight">🇨🇦 Canadian Retirement Calculator</h1>
             <p className="text-xs text-muted-foreground">All calculations are private and run in your browser</p>
           </div>
-          <div className="flex items-center gap-2">
-            {lmConnected && (
-              <span className="text-xs bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400 px-2 py-1 rounded-full font-medium">
-                Lunch Money connected
-              </span>
-            )}
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/settings"><Settings className="h-4 w-4 mr-1" />Settings</Link>
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            asChild
+            className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
+          >
+            <Link href="/settings">
+              {lmConnected ? (
+                <><Pencil className="h-4 w-4 mr-1.5" />Edit accounts</>
+              ) : (
+                <><Plus className="h-4 w-4 mr-1.5" />Add/Import accounts</>
+              )}
+            </Link>
+          </Button>
         </div>
       </header>
 

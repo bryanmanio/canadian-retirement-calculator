@@ -19,6 +19,7 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
+import { Info } from "lucide-react"
 import { useMemo } from "react"
 
 function formatYAxis(value: number): string {
@@ -77,6 +78,19 @@ export function MonteCarloChart() {
 
       {state.monteCarloEnabled && (
         <CardContent className="space-y-3">
+          <div className="rounded-md border bg-muted/40 p-3 text-xs space-y-2">
+            <div className="flex items-center gap-1.5 font-semibold">
+              <Info className="h-3.5 w-3.5 text-blue-500" />
+              What is a Monte Carlo simulation?
+            </div>
+            <p className="text-muted-foreground leading-relaxed">
+              The single-line projections above assume a steady, fixed return every year — but real markets don&apos;t work that way. A Monte Carlo simulation runs hundreds of randomized retirement paths where each year&apos;s return is drawn from a normal distribution centered on your expected return, with a configurable standard deviation to model market volatility.
+            </p>
+            <p className="text-muted-foreground leading-relaxed">
+              The shaded bands show the spread of outcomes: the <strong>median (50th percentile)</strong> is the typical path, while the <strong>10th–90th percentile</strong> band captures 80% of simulated outcomes. The <strong>success rate</strong> is the share of simulations where your portfolio still has money at age 90 — a higher number means your plan is more resilient to bad market sequences.
+            </p>
+          </div>
+
           <div className="flex items-center gap-3 flex-wrap">
             <Button
               size="sm"
@@ -150,8 +164,9 @@ export function MonteCarloChart() {
           )}
 
           <p className="text-xs text-muted-foreground">
-            500 simulations using a normal distribution (mean = current return rate, std dev = {(state.assumptions.stdDev * 100).toFixed(0)}%).
-            Shaded bands show 10th–90th percentile range.
+            {state.assumptions.monteCarloSimulations} simulations · normal distribution
+            (mean = current return rate, std dev = {(state.assumptions.stdDev * 100).toFixed(0)}%) ·
+            shaded bands = 10th–90th percentile range.
           </p>
         </CardContent>
       )}
