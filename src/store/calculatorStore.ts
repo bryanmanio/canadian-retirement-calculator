@@ -40,23 +40,23 @@ const DEFAULT_BALANCES: PortfolioBalances = {
 
 const DEFAULT_CONTRIBUTIONS: Contributions = {
   tfsa: 7_000,
-  rrsp: 15_000,
+  rrsp: 0,
   nonRegistered: 0,
-  corporate: 0,
+  corporate: 100_000,
 }
 
 const DEFAULT_BENEFITS: GovernmentBenefits = {
   includeOAS: true,
   oasStartAge: 65,
-  includeCPP: true,
+  includeCPP: false,
   cppStartAge: 65,
   estimatedMonthlyCPP: 800,
 }
 
 const DEFAULT_TARGET: RetirementTarget = {
-  annualIncome: 80_000,
-  incomeType: "salary",
-  withdrawalStructure: "personal-first",
+  annualIncome: 160_000,
+  incomeType: "mixed",
+  withdrawalStructure: "blended",
 }
 
 interface CalculatorState {
@@ -109,9 +109,9 @@ interface CalculatorState {
 export const useCalculatorStore = create<CalculatorState>()(
   persist(
     immer((set, get) => ({
-      currentAge: 35,
+      currentAge: 41,
       targetRetirementAge: 60,
-      province: "ON" as ProvinceCode,
+      province: "AB" as ProvinceCode,
       filingStatus: "single" as const,
 
       balances: DEFAULT_BALANCES,
@@ -200,15 +200,22 @@ export const useCalculatorStore = create<CalculatorState>()(
           if (!valid) throw new Error("Invalid API key — please check and try again.")
           saveLunchMoneyKey(key)
           const accounts = await fetchLunchMoneyAccounts(key)
-          const categories: Record<string, AccountCategory> = {}
+
+          // Preserve any categorizations the user previously set.
+          // Only auto-suggest for accounts we haven't seen before.
+          const existing = get().lmAccountCategories
+          const merged: Record<string, AccountCategory> = { ...existing }
           for (const acc of accounts) {
+            const id = String(acc.id)
+            if (merged[id]) continue // user already chose — don't overwrite
             const suggested = suggestCategory(acc)
-            if (suggested) categories[String(acc.id)] = suggested as AccountCategory
+            if (suggested) merged[id] = suggested as AccountCategory
           }
+
           set(s => {
             s.lmConnected = true
             s.lmAccounts = accounts
-            s.lmAccountCategories = categories
+            s.lmAccountCategories = merged
             s.lmLastSynced = new Date().toISOString()
             s.lmSyncing = false
           })
@@ -237,8 +244,19 @@ export const useCalculatorStore = create<CalculatorState>()(
         set(s => { s.lmSyncing = true; s.lmSyncError = null })
         try {
           const accounts = await fetchLunchMoneyAccounts(key)
+          // Auto-suggest categories for any newly-added accounts;
+          // preserve all existing manual categorizations.
+          const existing = get().lmAccountCategories
+          const merged: Record<string, AccountCategory> = { ...existing }
+          for (const acc of accounts) {
+            const id = String(acc.id)
+            if (merged[id]) continue
+            const suggested = suggestCategory(acc)
+            if (suggested) merged[id] = suggested as AccountCategory
+          }
           set(s => {
             s.lmAccounts = accounts
+            s.lmAccountCategories = merged
             s.lmLastSynced = new Date().toISOString()
             s.lmSyncing = false
           })
@@ -322,9 +340,9 @@ export const useCalculatorStore = create<CalculatorState>()(
 
       resetDefaults: () =>
         set(s => {
-          s.currentAge = 35
+          s.currentAge = 41
           s.targetRetirementAge = 60
-          s.province = "ON"
+          s.province = "AB"
           s.filingStatus = "single"
           Object.assign(s.balances, DEFAULT_BALANCES)
           Object.assign(s.contributions, DEFAULT_CONTRIBUTIONS)
@@ -344,7 +362,7 @@ export const useCalculatorStore = create<CalculatorState>()(
       },
     })),
     {
-      name: "retirement-calc-v1",
+      name: "retirement-calc-v3",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

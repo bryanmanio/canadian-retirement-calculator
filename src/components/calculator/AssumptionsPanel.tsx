@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { formatPercent } from "@/lib/utils"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 
 function AssumptionSlider({
   label,
@@ -59,14 +59,13 @@ export function AssumptionsPanel() {
 
   return (
     <Card>
-      <CardHeader className="pb-0">
-        <Accordion type="single" collapsible>
-          <AccordionItem value="assumptions" className="border-none">
-            <AccordionTrigger className="py-2">
-              <CardTitle className="text-sm font-semibold">Assumptions &amp; Settings</CardTitle>
-            </AccordionTrigger>
-            <AccordionContent>
-              <CardContent className="px-0 space-y-5 pt-2">
+      <Accordion type="single" collapsible>
+        <AccordionItem value="assumptions" className="border-none">
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <span className="text-sm font-semibold">Assumptions &amp; Settings</span>
+          </AccordionTrigger>
+          <AccordionContent>
+            <CardContent className="pt-0 space-y-5">
                 {/* Inflation & rates */}
                 <div className="space-y-3">
                   <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -130,6 +129,16 @@ export function AssumptionsPanel() {
                     accounting for lower bond yields and longer retirements.
                     <strong> Aggressive (5%)</strong> works only with a flexible spending plan or shorter horizon.
                   </p>
+                  <AssumptionSlider
+                    label="Post-retirement return (de-risked)"
+                    value={state.assumptions.postRetirementReturn}
+                    min={0.02} max={0.10} step={0.005}
+                    onChange={v => state.setAssumptions({ postRetirementReturn: v })}
+                  />
+                  <p className="text-xs text-muted-foreground -mt-1">
+                    Assumes you shift to a more conservative allocation (e.g., 60/40) at retirement.
+                    Set this to your scenario rate if you plan to stay 100% equity.
+                  </p>
                 </div>
 
                 {/* Return rates */}
@@ -138,21 +147,21 @@ export function AssumptionsPanel() {
                     Return Rates
                   </div>
                   <AssumptionSlider
-                    label="Best case (XEQT benchmark)"
+                    label="Best (100% equity, 50-yr avg)"
                     value={state.assumptions.scenarioReturns.best}
-                    min={0.04} max={0.20} step={0.001}
+                    min={0.04} max={0.15} step={0.001}
                     onChange={v => state.setScenarioReturn("best", v)}
                   />
                   <AssumptionSlider
-                    label="Current trajectory"
+                    label="Average (60/40 balanced)"
                     value={state.assumptions.scenarioReturns.current}
-                    min={0.04} max={0.20} step={0.001}
+                    min={0.03} max={0.12} step={0.001}
                     onChange={v => state.setScenarioReturn("current", v)}
                   />
                   <AssumptionSlider
-                    label="Worst case (conservative)"
+                    label="Worst (conservative / bear decade)"
                     value={state.assumptions.scenarioReturns.worst}
-                    min={0.02} max={0.15} step={0.001}
+                    min={0.02} max={0.10} step={0.001}
                     onChange={v => state.setScenarioReturn("worst", v)}
                   />
                 </div>
@@ -184,19 +193,18 @@ export function AssumptionsPanel() {
                   </div>
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs"
-                  onClick={state.resetDefaults}
-                >
-                  Reset all assumptions to defaults
-                </Button>
-              </CardContent>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardHeader>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={state.resetDefaults}
+              >
+                Reset all assumptions to defaults
+              </Button>
+            </CardContent>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   )
 }

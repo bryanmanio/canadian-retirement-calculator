@@ -156,7 +156,7 @@ export function ProjectionsChart() {
             <Line
               type="monotone"
               dataKey="best"
-              name="Best Case (XEQT)"
+              name="Best"
               stroke="#22c55e"
               strokeWidth={2}
               dot={false}
@@ -165,7 +165,7 @@ export function ProjectionsChart() {
             <Line
               type="monotone"
               dataKey="current"
-              name="Current Trajectory"
+              name="Average"
               stroke="#3b82f6"
               strokeWidth={2}
               strokeDasharray="5 3"
@@ -175,7 +175,7 @@ export function ProjectionsChart() {
             <Line
               type="monotone"
               dataKey="worst"
-              name="Worst Case"
+              name="Worst"
               stroke="#ef4444"
               strokeWidth={2}
               strokeDasharray="2 4"
