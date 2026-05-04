@@ -102,10 +102,10 @@ export function ProjectionsChart() {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-semibold">Portfolio Projections</CardTitle>
+      <CardHeader className="pb-3 pt-6 px-6">
+        <CardTitle className="text-[15px] font-medium tracking-tight">Portfolio projections</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-6 pb-6">
         <ResponsiveContainer width="100%" height={340}>
           <ComposedChart data={chartData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
