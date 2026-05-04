@@ -30,16 +30,21 @@ function PageInner() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card no-print">
-        <div className="max-w-screen-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">🇨🇦 Canadian Retirement Calculator</h1>
-            <p className="text-xs text-muted-foreground">All calculations are private and run in your browser</p>
+      <header className="border-b border-border/60 bg-background/80 backdrop-blur-sm no-print sticky top-0 z-30">
+        <div className="max-w-screen-xl mx-auto px-6 sm:px-8 py-5 flex items-center justify-between gap-4">
+          <div className="space-y-0.5">
+            <h1 className="text-lg sm:text-xl font-medium tracking-tight">
+              <span className="mr-1.5">🇨🇦</span>
+              Canadian Retirement Calculator
+            </h1>
+            <p className="text-[11px] sm:text-xs text-muted-foreground tracking-wide">
+              Private · runs entirely in your browser
+            </p>
           </div>
           <Button
             size="sm"
             asChild
-            className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
+            className="bg-green-600 hover:bg-green-700 text-white shadow-sm rounded-full px-4"
           >
             <Link href="/settings">
               {lmConnected ? (
@@ -52,19 +57,19 @@ function PageInner() {
         </div>
       </header>
 
-      <main className="max-w-screen-2xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-screen-xl mx-auto px-6 sm:px-8 py-10 sm:py-14 space-y-10 sm:space-y-12">
         {/* Dashboard */}
         <RetirementDashboard />
 
         {/* Main layout: sidebar + content */}
-        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-8 lg:gap-10">
           {/* Left sidebar: inputs */}
-          <aside className="space-y-4 no-print">
+          <aside className="space-y-5 no-print lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
             <InputsPanel />
           </aside>
 
           {/* Right: charts and analysis */}
-          <div className="space-y-6 min-w-0">
+          <div className="space-y-10 sm:space-y-12 min-w-0">
             <ScenarioCards />
             <ProjectionsChart />
             <MonteCarloChart />
@@ -78,9 +83,9 @@ function PageInner() {
         <ExportBar />
       </main>
 
-      <footer className="border-t mt-12 py-6 text-center text-xs text-muted-foreground no-print">
-        <p>For informational purposes only. Not financial advice. Consult a licensed financial advisor for personalized guidance.</p>
-        <p className="mt-1">2025 tax brackets · OAS &amp; CPP rates current as of Q1 2025</p>
+      <footer className="border-t border-border/60 mt-16 py-10 text-center text-[11px] text-muted-foreground tracking-wide no-print">
+        <p className="max-w-md mx-auto">For informational purposes only. Not financial advice. Consult a licensed financial advisor for personalized guidance.</p>
+        <p className="mt-2 opacity-70">2025 tax brackets · OAS &amp; CPP rates current as of Q1 2025</p>
       </footer>
     </div>
   )

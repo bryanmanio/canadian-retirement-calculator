@@ -90,8 +90,8 @@ export function WithdrawalBreakdown() {
   if (breakdowns.length === 0) {
     return (
       <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold">Withdrawal Breakdown</CardTitle>
+        <CardHeader className="pb-3 pt-6 px-6">
+          <CardTitle className="text-[15px] font-medium tracking-tight">Withdrawal breakdown</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">Set a retirement age in the future to see withdrawal breakdown.</p>

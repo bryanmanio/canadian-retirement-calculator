@@ -62,9 +62,9 @@ export function MonteCarloChart() {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3 pt-6 px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold">Monte Carlo Simulation</CardTitle>
+          <CardTitle className="text-[15px] font-medium tracking-tight">Monte Carlo simulation</CardTitle>
           <div className="flex items-center gap-2">
             <Label htmlFor="mc-toggle" className="text-xs text-muted-foreground">Show simulation</Label>
             <Switch

@@ -61,8 +61,8 @@ export function AssumptionsPanel() {
     <Card>
       <Accordion type="single" collapsible>
         <AccordionItem value="assumptions" className="border-none">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <span className="text-sm font-semibold">Assumptions &amp; Settings</span>
+          <AccordionTrigger className="px-6 py-5 hover:no-underline">
+            <span className="text-[15px] font-medium tracking-tight">Assumptions &amp; settings</span>
           </AccordionTrigger>
           <AccordionContent>
             <CardContent className="pt-0 space-y-5">

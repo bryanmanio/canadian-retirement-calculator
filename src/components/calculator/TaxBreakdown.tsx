@@ -104,8 +104,8 @@ export function TaxBreakdown() {
     <Card>
       <Accordion type="single" collapsible>
         <AccordionItem value="tax" className="border-none">
-          <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <span className="text-sm font-semibold">Tax Breakdown</span>
+          <AccordionTrigger className="px-6 py-5 hover:no-underline">
+            <span className="text-[15px] font-medium tracking-tight">Tax breakdown</span>
           </AccordionTrigger>
           <AccordionContent>
             <CardContent className="pt-0">

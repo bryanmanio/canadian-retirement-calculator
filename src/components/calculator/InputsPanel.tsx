@@ -97,11 +97,11 @@ export function InputsPanel() {
   const oasAnnual = OAS_ANNUAL_BY_START_AGE[state.benefits.oasStartAge] ?? 0
 
   return (
-    <div className="space-y-3">
-      <Accordion type="multiple" defaultValue={["personal", "portfolio"]}>
+    <div className="space-y-1">
+      <Accordion type="multiple" defaultValue={["personal", "portfolio"]} className="space-y-1">
         {/* Personal Info */}
         <AccordionItem value="personal">
-          <AccordionTrigger className="text-sm font-semibold">Personal Info</AccordionTrigger>
+          <AccordionTrigger className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Personal Info</AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             <SliderField
               label="Current age"
@@ -131,7 +131,25 @@ export function InputsPanel() {
               </Select>
             </div>
             <div className="flex items-center justify-between">
-              <Label className="text-sm text-muted-foreground">Filing status</Label>
+              <div className="flex items-center gap-1.5">
+                <Label className="text-sm text-muted-foreground">Filing status</Label>
+                <TooltipProvider delayDuration={120}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className="h-3 w-3 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[260px] text-xs space-y-1.5">
+                      <p className="font-medium">How filing status affects your projection:</p>
+                      <ul className="space-y-1 list-disc pl-3.5">
+                        <li><strong>Married</strong> unlocks pension income splitting after 65 — splitting RRIF/LIF withdrawals with a lower-income spouse can drop your effective tax rate by 5–10%.</li>
+                        <li>Spousal credits and TFSA contributions (via spousal contributions) become available.</li>
+                        <li>OAS clawback is calculated per individual, so splitting income can keep both spouses below the $90,997 threshold.</li>
+                      </ul>
+                      <p className="text-muted-foreground italic">Note: this calculator currently models a single tax filer — selecting Married does not yet split income for tax purposes, but is reserved for future enhancements.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
               <div className="flex items-center gap-2 text-xs">
                 <span className={state.filingStatus === "single" ? "font-medium" : "text-muted-foreground"}>Single</span>
                 <Switch
@@ -146,7 +164,7 @@ export function InputsPanel() {
 
         {/* Portfolio Balances */}
         <AccordionItem value="portfolio">
-          <AccordionTrigger className="text-sm font-semibold">Portfolio Balances</AccordionTrigger>
+          <AccordionTrigger className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Portfolio Balances</AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             <SliderField label="TFSA" value={state.balances.tfsa} min={0} max={500_000} step={1_000}
               format={formatCurrency} onChange={v => state.setBalances({ tfsa: v })} />
@@ -163,7 +181,7 @@ export function InputsPanel() {
 
         {/* Contributions */}
         <AccordionItem value="contributions">
-          <AccordionTrigger className="text-sm font-semibold">Annual Contributions</AccordionTrigger>
+          <AccordionTrigger className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Annual Contributions</AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             <SliderField label="TFSA (annual)" value={state.contributions.tfsa} min={0} max={100_000} step={500}
               format={formatCurrency} onChange={v => state.setContributions({ tfsa: v })} />
@@ -178,7 +196,7 @@ export function InputsPanel() {
 
         {/* Retirement Income Target */}
         <AccordionItem value="target">
-          <AccordionTrigger className="text-sm font-semibold">Retirement Income Target</AccordionTrigger>
+          <AccordionTrigger className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Retirement Income Target</AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             <SliderField label="Target net annual income" value={state.target.annualIncome} min={30_000} max={500_000} step={5_000}
               format={formatCurrency} onChange={v => state.setTarget({ annualIncome: v })} />
@@ -246,7 +264,7 @@ export function InputsPanel() {
 
         {/* Government Benefits */}
         <AccordionItem value="benefits">
-          <AccordionTrigger className="text-sm font-semibold">Government Benefits</AccordionTrigger>
+          <AccordionTrigger className="text-[11px] font-semibold uppercase tracking-[0.12em] text-foreground">Government Benefits</AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             {/* OAS */}
             <div className="flex items-center justify-between">

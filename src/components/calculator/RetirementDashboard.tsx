@@ -1,13 +1,11 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { useCalculatorStore } from "@/store/calculatorStore"
 import { computeAllScenarios, calculateRetirementReadiness } from "@/lib/retirement"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Button } from "@/components/ui/button"
 import { formatCurrency, formatPercent, getStatusColor, getStatusBg } from "@/lib/utils"
-import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 function MetricCard({
@@ -29,18 +27,28 @@ function MetricCard({
   const bg = ratio !== undefined ? getStatusBg(ratio) : ""
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Card className={cn("border cursor-help", bg)}>
-            <CardContent className={size === "sm" ? "p-3" : "p-4"}>
-              <div className="text-xs text-muted-foreground mb-1">{label}</div>
+          <Card className={cn("border cursor-help transition-shadow hover:shadow-sm", bg)}>
+            <CardContent className={size === "sm" ? "p-4 space-y-1" : "p-6 space-y-1.5"}>
               <div className={cn(
-                "font-bold tabular-nums",
-                size === "sm" ? "text-lg" : "text-2xl",
+                "text-muted-foreground font-medium tracking-[0.08em] uppercase",
+                size === "sm" ? "text-[10px]" : "text-[11px]"
+              )}>
+                {label}
+              </div>
+              <div className={cn(
+                "font-semibold tabular-nums tracking-tight",
+                size === "sm" ? "text-xl" : "text-3xl",
                 color
               )}>{value}</div>
-              {sub && <div className="text-xs text-muted-foreground mt-0.5">{sub}</div>}
+              {sub && (
+                <div className={cn(
+                  "text-muted-foreground",
+                  size === "sm" ? "text-[11px]" : "text-xs"
+                )}>{sub}</div>
+              )}
             </CardContent>
           </Card>
         </TooltipTrigger>
@@ -52,7 +60,6 @@ function MetricCard({
 
 export function RetirementDashboard() {
   const state = useCalculatorStore()
-  const [expanded, setExpanded] = useState(false)
 
   const readiness = useMemo(() => {
     const params = {
@@ -77,9 +84,9 @@ export function RetirementDashboard() {
   const isOnTrack = readiness.fundingRatio >= 1.0
 
   return (
-    <div className="print-section space-y-3">
+    <div className="print-section space-y-5">
       {/* Primary metrics — 3 large cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           label="Years to retirement"
           value={readiness.yearsToRetirement <= 0 ? "Retired ✓" : String(readiness.yearsToRetirement)}
@@ -106,53 +113,41 @@ export function RetirementDashboard() {
 
       {/* Banner */}
       {!isOnTrack && readiness.yearsToRetirement > 0 && (
-        <div className="rounded-lg border border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800 px-4 py-2.5 text-sm">
+        <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-900/60 px-5 py-3 text-sm">
           <span className="text-red-700 dark:text-red-400">
             Save <strong>{formatCurrency(readiness.additionalMonthlySavingsNeeded)}/mo</strong> more to retire at {state.targetRetirementAge}.
           </span>
         </div>
       )}
 
-      {/* Toggle for detailed metrics */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="text-xs h-7 text-muted-foreground"
-        onClick={() => setExpanded(e => !e)}
-      >
-        <ChevronDown className={cn("h-3 w-3 mr-1 transition-transform", expanded && "rotate-180")} />
-        {expanded ? "Hide" : "Show"} details
-      </Button>
-
-      {expanded && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <MetricCard
-            label="Portfolio today"
-            value={formatCurrency(readiness.portfolioToday, true)}
-            tooltip="Sum of all portfolio balances entered (TFSA + RRSP + non-reg + corporate + other)."
-            size="sm"
-          />
-          <MetricCard
-            label="Projected at retirement"
-            value={formatCurrency(readiness.projectedAtRetirement, true)}
-            tooltip="Estimated portfolio value at your retirement age (in today's dollars, inflation-adjusted)."
-            size="sm"
-          />
-          <MetricCard
-            label="Required portfolio"
-            value={formatCurrency(readiness.requiredPortfolio, true)}
-            tooltip="Portfolio size needed at retirement to fund your target income at your safe withdrawal rate."
-            size="sm"
-          />
-          <MetricCard
-            label="Effective tax rate"
-            value={formatPercent(readiness.effectiveTaxRate)}
-            sub={`${state.province} at target income`}
-            tooltip="Combined federal + provincial effective tax rate at your target retirement income level."
-            size="sm"
-          />
-        </div>
-      )}
+      {/* Secondary metrics — always visible */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <MetricCard
+          label="Portfolio today"
+          value={formatCurrency(readiness.portfolioToday, true)}
+          tooltip="Sum of all portfolio balances entered (TFSA + RRSP + non-reg + corporate + other)."
+          size="sm"
+        />
+        <MetricCard
+          label="Projected at retirement"
+          value={formatCurrency(readiness.projectedAtRetirement, true)}
+          tooltip="Estimated portfolio value at your retirement age (in today's dollars, inflation-adjusted)."
+          size="sm"
+        />
+        <MetricCard
+          label="Required portfolio"
+          value={formatCurrency(readiness.requiredPortfolio, true)}
+          tooltip="Portfolio size needed at retirement to fund your target income at your safe withdrawal rate."
+          size="sm"
+        />
+        <MetricCard
+          label="Effective tax rate"
+          value={formatPercent(readiness.effectiveTaxRate)}
+          sub={`${state.province} at target income`}
+          tooltip="Combined federal + provincial effective tax rate at your target retirement income level."
+          size="sm"
+        />
+      </div>
     </div>
   )
 }
